@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="https://unpkg.com/vtk.js"></script>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script type="text/javascript">
+
+
+            //vtkGenericRenderWinderWindow는 RenderWindow, 렌더러 및 인터랙터의 모든 설정을 수행합니다.
+            //vtkGenericRenderWindow does all of the setup for the RenderWindow, Renderer, and Interactor.
+            import vtkGenericRenderWindow from 'vtk.js/Sources/Rendering/Misc/GenericRenderWindow';
+
+            // --- Set up our renderer ---
+
+            const container = document.querySelector('#container');
+
+            // We use the wrapper here to abstract out manual RenderWindow/Renderer/OpenGLRenderWindow setup
+            // 여기서는 래퍼를 사용하여 수동 RenderWindow/Renderer/OpenGLRenderWindow 설정을 추상화합니다.
+            const genericRenderWindow = vtkGenericRenderWindow.newInstance();
+            genericRenderWindow.setContainer(container);
+            genericRenderWindow.resize();
+
+            const renderer = genericRenderWindow.getRenderer();
+            const renderWindow = genericRenderWindow.getRenderWindow();
+
+/*
+
+            const container = document.querySelector('#container');
+
+
+			// VTK renderWindow/renderer
+			const renderWindow = vtk.Rendering.Core.vtkRenderWindow.newInstance();
+			const renderer     = vtk.Rendering.Core.vtkRenderer.newInstance();
+			renderWindow.addRenderer(renderer);
+
+			// WebGL/OpenGL impl
+			const openGLRenderWindow = vtk.Rendering.OpenGL.vtkRenderWindow.newInstance();
+			openGLRenderWindow.setContainer(container);
+			openGLRenderWindow.setSize(1000, 1000);
+			renderWindow.addView(openGLRenderWindow);
+
+			// Interactor
+			const interactor = vtk.Rendering.Core.vtkRenderWindowInteractor.newInstance();
+			interactor.setView(openGLRenderWindow);
+			interactor.initialize();
+			interactor.bindEvents(container);
+
+			// Interactor style
+			const trackball = vtk.Interaction.Style.vtkInteractorStyleTrackballCamera.newInstance();
+			interactor.setInteractorStyle(trackball);
+*/
+
+            import vtkConeSource from 'vtk.js/Sources/Filters/Sources/ConeSource';
+            import vtkActor from 'vtk.js/Sources/Rendering/Core/Actor';
+            import vtkMapper from 'vtk.js/Sources/Rendering/Core/Mapper';
+
+            const actor = vtkActor.newInstance();
+            const mapper = vtkMapper.newInstance();
+
+            //this generates a cone
+            const conSource = vtkConeSource.newInstance({
+                height : 1.0,
+            })
+
+            mapper.setInputConnection(coneSource.getOutputPort());
+            actor.setMapper(mapper);
+
+            // --- Add actor to scene ---
+
+            renderer.addActor(actor);
+
+            // --- Reset camera and render the scene ---
+
+            renderer.resetCamera();
+            renderWindow.render();
+            
+
+/*
+			// Pipeline
+			const cone   = vtk.Filters.Sources.vtkConeSource.newInstance();
+			const actor  = vtk.Rendering.Core.vtkActor.newInstance();
+			const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
+
+			actor.setMapper(mapper);
+			mapper.setInputConnection(cone.getOutputPort());
+			renderer.addActor(actor);
+
+			// Render
+			renderer.resetCamera();
+			renderWindow.render(); 
+*/
+
+		</script>
+	</body>
+</html>
